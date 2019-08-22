@@ -1,6 +1,6 @@
 # wti-docker
 
-Webtranslateit.com CLI tool in Docker
+[Webtranslateit.com](https://webtranslateit.com) CLI tool in Docker.
 
 # License
 
