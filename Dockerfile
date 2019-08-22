@@ -1,5 +1,5 @@
 FROM ruby:2.5
-MAINTAINER adam.stipak@gmail.com
+MAINTAINER edouard@atelierconvivialite.com
 
 RUN gem install web_translate_it
 
