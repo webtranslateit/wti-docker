@@ -4,4 +4,4 @@
 
 # License
 
-Copyright (c) 2009-2019 WebTranslateIt Software S.L, released under the MIT License.
+Copyright (c) 2009-2022 WebTranslateIt Software S.L, released under the MIT License.

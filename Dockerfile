@@ -1,6 +1,9 @@
 FROM ruby:2.5
-MAINTAINER edouard@atelierconvivialite.com
+MAINTAINER support@webtranslateit.com
 
-RUN gem install web_translate_it
+ENV VERSION=2.6.1
 
-CMD ["wti", "--help"]
+RUN gem install web_translate_it --version ${VERSION} --no-format-exec
+
+ENTRYPOINT ["wti"]
+CMD ["--help"]
