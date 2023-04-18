@@ -1,4 +1,4 @@
-FROM ruby:3.0.3-alpine3.13
+FROM ruby:3.2.2-alpine3.17
 MAINTAINER support@webtranslateit.com
 
 ENV VERSION=2.8.2
