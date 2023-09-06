@@ -1,5 +1,8 @@
 FROM ruby:alpine
 LABEL org.opencontainers.image.authors="support@webtranslateit.com"
+LABEL org.opencontainers.image.description="A Command Line Interface tool to push and pull language files to WebTranslateIt.com.""
+LABEL org.opencontainers.image.source="https://github.com/webtranslateit/wti-docker"
+LABEL org.opencontainers.image.licenses=MIT
 
 ENV VERSION=2.8.3
 
