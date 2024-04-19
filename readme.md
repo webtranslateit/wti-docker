@@ -2,7 +2,7 @@
 
 # wti-docker
 
-Generated Docker image for [web_translate_it rubygem](https://github/webtranslateit/webtranslateit) to allow simple usage without installation.
+Generated Docker image for [web_translate_it rubygem](https://github.com/webtranslateit/webtranslateit) to allow simple usage without installation.
 
 [Webtranslateit.com](https://webtranslateit.com) CLI tool in Docker.
 
