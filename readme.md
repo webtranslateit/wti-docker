@@ -8,4 +8,4 @@ Generated Docker image for [web_translate_it rubygem](https://github.com/webtran
 
 # License
 
-Copyright (c) 2009-2023 WebTranslateIt Software S.L, released under the MIT License.
+Copyright (c) 2009-2024 WebTranslateIt Software S.L, released under the MIT License.
