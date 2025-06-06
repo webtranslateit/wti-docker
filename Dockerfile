@@ -4,7 +4,7 @@ LABEL org.opencontainers.image.description="A Command Line Interface tool to pus
 LABEL org.opencontainers.image.source="https://github.com/webtranslateit/wti-docker"
 LABEL org.opencontainers.image.licenses=MIT
 
-ENV VERSION=3.1.1
+ENV VERSION=3.1.2
 
 RUN gem install web_translate_it --version ${VERSION} --no-format-exec
 
