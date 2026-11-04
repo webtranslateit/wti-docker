@@ -1,0 +1,67 @@
+name: Update gem
+
+# Releases a new image whenever a new web_translate_it version is on
+# rubygems.org: bumps VERSION in the Dockerfile, tags and releases that
+# version, then builds and pushes the image. Polling rubygems.org keeps the
+# gem repository free of any credential for this one.
+on:
+  schedule:
+    - cron: "17 * * * *" # hourly
+  # Run it by hand right after a gem release rather than waiting.
+  workflow_dispatch:
+
+concurrency:
+  group: update-gem
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # commit the bump, tag and release it
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      released: ${{ steps.release.outcome == 'success' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+
+      - name: Compare the Dockerfile with rubygems.org
+        id: check
+        run: |
+          ruby -rjson -rnet/http -e '
+            versions = JSON.parse(Net::HTTP.get(URI("https://rubygems.org/api/v1/versions/web_translate_it.json")))
+            latest = versions.reject { _1["prerelease"] }.map { Gem::Version.new(_1["number"]) }.max
+            current = Gem::Version.new(File.read("Dockerfile")[/^ENV VERSION=(\S+)$/, 1] || abort("No ENV VERSION in Dockerfile"))
+            puts "Dockerfile: #{current}, rubygems.org: #{latest}"
+            File.write(ENV.fetch("GITHUB_OUTPUT"), "version=#{latest}\n", mode: "a") if latest > current
+          '
+
+      - name: Commit the bump, tag and release it
+        id: release
+        if: steps.check.outputs.version != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.check.outputs.version }}
+        run: |
+          sed -i "s/^ENV VERSION=.*/ENV VERSION=${VERSION}/" Dockerfile
+          git config user.name "Édouard Brière"
+          git config user.email "edouard.briere@gmail.com"
+          git commit -am "Release ${VERSION}"
+          git push origin HEAD:master
+          gh release create "${VERSION}" \
+            --target "$(git rev-parse HEAD)" \
+            --title "${VERSION}" \
+            --notes "Image for web_translate_it ${VERSION}: https://github.com/webtranslateit/webtranslateit/releases/tag/${VERSION}"
+
+  publish:
+    needs: bump
+    if: needs.bump.outputs.released == 'true'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/docker-publish.yml
+    with:
+      version: ${{ needs.bump.outputs.version }}
