@@ -8,6 +8,14 @@ name: Docker
 on:
   release:
     types: [published]
+  # Called by update-gem.yml. A release created there with GITHUB_TOKEN does
+  # not fire the release event, so that workflow calls this one directly.
+  workflow_call:
+    inputs:
+      version:
+        description: web_translate_it version to build, also the git tag
+        required: true
+        type: string
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -30,6 +38,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.version || github.ref }}
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -61,6 +71,11 @@ jobs:
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # Explicit, so a called run (whose ref is master) gets the same
+          # tags as a release run: the version and latest.
+          tags: |
+            type=raw,value=${{ inputs.version || github.event.release.tag_name }}
+            type=raw,value=latest
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
